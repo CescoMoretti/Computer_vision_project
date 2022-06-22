@@ -33,6 +33,7 @@ def extract(video, frames_dir, video_dir):
             success, image = video_cap.read()
 
             filename = os.path.join(out_dir, str(count).zfill(4) + '.jpg')
+            print(filename)
             cv2.imwrite(filename, image)
             count += 1
 

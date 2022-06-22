@@ -1,1 +1,0 @@
-#main for people detection section
