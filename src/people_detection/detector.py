@@ -1,5 +1,4 @@
 #main for people detection section
-from charset_normalizer import detect
 import numpy as np
 import matplotlib.pyplot as plt
 import cv2, os
@@ -19,13 +18,10 @@ class Detector():
         self.progressiveId = 0
 
 
-    def detectMissingPeople(self, imgpath):
-        if self.progressiveId == 200:
-            self.progressiveId = 0
+    def detectPeople(self, frame):
         self.progressiveId += 1
-        detected = False
         COLORS = np.random.randint(0, 255, size=(len(self.classes), 3), dtype="uint8")
-        frame =  cv2.imread(imgpath)
+        #frame =  cv2.imread(imgpath)
 
         (H, W) = frame.shape[:2]
 
@@ -58,15 +54,16 @@ class Detector():
         indexes = cv2.dnn.NMSBoxes(bounding_boxes, confidences, 0.65, 0.4)
 
         if len(indexes) > 0:
-            detected = not detected
+            #sorting delle bounding box
             for i in indexes.flatten():
                 (x, y) = (int(bounding_boxes[i][0]), int(bounding_boxes[i][1]))
                 (w, h) = (int(bounding_boxes[i][2]), int(bounding_boxes[i][3]))
+                #dati bounding box
 
                 color = [int(c) for c in COLORS[class_ids[i]]]
                 cv2.rectangle(frame, (x, y), (x + w, y + h), color, 2)
                 text = "{}: {:.4f}".format(self.classes[class_ids[i]], confidences[i])
                 cv2.putText(frame, text, (x, y - 5), cv2.FONT_HERSHEY_SIMPLEX, 1, color, 3)
 
-        cv2.imwrite(self.this_path+'/src/dog/predicted_imgs/' + str(self.progressiveId) + '.jpg', frame)
-        return self.progressiveId, self.this_path+'/src/dog/predicted_imgs/' + str(self.progressiveId) + '.jpg', detected
+        cv2.imwrite('c:/Users/cesco/OneDrive/Desktop/computer vision/Project group 25/test_out/test_detection/' + str(self.progressiveId) + '.jpg', frame)
+        return self.progressiveId, 'c:/Users/cesco/OneDrive/Desktop/computer vision/Project group 25/test_out/test_detection/' + str(self.progressiveId) + '.jpg'
