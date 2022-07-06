@@ -2,7 +2,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import cv2, os
-class Detector():
+class People_detector():
 
     def __init__(self, weights_path, cfg_path, l_names_path):
         self.this_path = os.getcwd()
