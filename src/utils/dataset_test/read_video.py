@@ -1,6 +1,6 @@
 import cv2 as cv
 #put the path in your pc
-capture = cv.VideoCapture('c:/Users/cesco/OneDrive/Desktop/computer vision/Project group 25/MOTSynth_1/000.mp4') 
+capture = cv.VideoCapture('path/to/video') 
 while(True):
     isTrue, frame = capture.read()
     if not isTrue:

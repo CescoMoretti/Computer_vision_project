@@ -27,7 +27,6 @@ class Visualizer(object):
 		self.FilePath = FilePath
 		self.metaInfoDir = metaInfoDir
 
-	# adapted from https://github.com/matterport/Mask_RCNN/blob/master/mrcnn/visualize.py
 	@property
 	def generate_colors(self):
 		"""
@@ -57,8 +56,8 @@ class Visualizer(object):
 
 
 		if not self.mode == "raw":
-		        #load File
-		        self.resFile = self.load(self.FilePath)
+			#load File
+			self.resFile = self.load(self.FilePath)
 
 		# get images Folder
 		# check if image folder exists

@@ -86,10 +86,11 @@ class MOTVisualizer(Visualizer):
 if __name__ == "__main__":
 	visualizer = MOTVisualizer(
 		seqName = "MOT16-02",
-		FilePath ="C:/Users/cesco/OneDrive/Desktop/computer vision/MOTSynth_mot_annotations/mot_annotations/000/gt/gt.txt",
-		image_dir = "C:/Users/cesco/OneDrive/Desktop/computer vision/Project group 25/test_out/frames/000/rgb/",
+		FilePath ="path/to/moths/annotation",
+		image_dir = "path/to/video/frame",
+		
 		mode = "gt",
-		output_dir  = "C:/Users/cesco/OneDrive/Desktop/computer vision/Project group 25/")
+		output_dir  = "path/to/save/printed/bb")
 
 	visualizer.generateVideo(
 	        displayTime = True,
