@@ -129,5 +129,5 @@ dmypy.json
 *.mp4
 *.avi
 
-/src/people_detection/YOLOv3/yolov3.weights
-/src/people_detection/YOLOv3/yolov3.cfg
+/src/detector/YOLOv4/*
+test_imgs/*
