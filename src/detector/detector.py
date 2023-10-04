@@ -45,7 +45,7 @@ class Detector():
         for (classid, score, box) in zip( classIds, scores, boxes):
             if classid == 0: #TODO togliere appena sistemo la rete
                 color = COLORS[int(classid) % len(COLORS)]
-                label = "%s : %f" % (self.classes[classid[0]], score)
+                label = "%s : %f" % (self.classes[0], score)
                 cv2.rectangle(frame, box, color, 2)
                 cv2.putText(frame, label, (box[0], box[1] - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, color, 2)
         cv2.imshow("test", frame)

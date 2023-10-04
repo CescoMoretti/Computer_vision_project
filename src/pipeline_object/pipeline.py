@@ -1,6 +1,7 @@
 from detector.detector import Detector
-from utils.functions.frame_extractor import Frame_extractor
-import os
+import sys, os
+sys.path.append(os.getcwd()+"/src/utils/") 
+from functions.frame_extractor import Frame_extractor
 from shapely.geometry import Polygon
 
 
