@@ -73,7 +73,7 @@ def loadData(h = 256, w = 128, data_dir = "C:\Market-1501-v15.09.15\pytorch", ba
 ### ------------
 ################################################################
 def load_network(network, epoch):
-    save_path = os.path.join('C:\Computer_vision_project\src\ReID\DeepReID\ModelResult', 'net_%s.pth'%epoch)
+    save_path = os.path.join('ModelResult', 'net_%s.pth'%epoch)
     network.load_state_dict(torch.load(save_path))
     return network
 
@@ -181,7 +181,7 @@ def test(image_datasets, dataloaders, nclasses, epoch, name, batchsize, ms):
     scipy.io.savemat('pytorch_result.mat', result)
 
     print(name)
-    result = 'C:\Computer_vision_project\src\ReID\DeepReID\TestReID\\result.txt'
+    result = 'DeepReID\TestReID\\result.txt'
     os.system('python evaluate_gpu.py | tee -a %s'%result)
 
 
@@ -208,7 +208,7 @@ if __name__=="__main__":
         ms.append(math.sqrt(s_f))
 
     # Configuration of train model
-    config_path = os.path.join("C:\Computer_vision_project\src\ReID\DeepReID\ModelResult", 'opts.yaml')
+    config_path = os.path.join("ModelResult", 'opts.yaml')
     with open(config_path, 'r') as stream:
         config = yaml.load(stream, Loader=yaml.FullLoader)
 

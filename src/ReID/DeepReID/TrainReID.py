@@ -196,7 +196,7 @@ def draw_curve(epoch, y_loss, y_err):
     if epoch == 0:
         ax0.legend()
         ax1.legend()
-    fig.savefig(os.path.join('C:\Computer_vision_project\src\ReID\DeepReID\ModelResult','train.jpg'))
+    fig.savefig(os.path.join('.\ModelResult','train.jpg'))
 
 ##############################################################################
 ### Save the network
@@ -204,7 +204,7 @@ def draw_curve(epoch, y_loss, y_err):
 ##############################################################################
 def save_network(model, epoch):
     save_filename = 'net_%s.pth'% epoch
-    save_path = os.path.join('C:\Computer_vision_project\src\ReID\DeepReID\ModelResult',save_filename)
+    save_path = os.path.join('.\ModelResult',save_filename)
     torch.save(model.cpu().state_dict(), save_path)
     pass
 
