@@ -18,6 +18,7 @@ import torchvision.transforms as T
 import cv2
 from scipy.spatial import distance
 import random
+from distances import L2_distance
 #from utils import fuse_all_conv_bn
 
 def args():
@@ -65,8 +66,8 @@ def load_network(network, epoch, path_model):
 ### --------------------
 ################################################################
 def extract_bb(data, frame, f, transform):
+    count = 0
     thisF = np.flatnonzero(data[:,0]==f)
-    cords = []
     for i in thisF:
         x1 = ((data[i, 2]-1)).astype(int)
         y1 = ((data[i, 3]-1)).astype(int)
@@ -79,9 +80,13 @@ def extract_bb(data, frame, f, transform):
         bb = torch.Tensor([x1, y1, x2, y2]).view(1, 4)
         zero = torch.zeros((1,1))
         bb = torch.cat((zero, bb), 1)
-        #crop = frame[x1:x2,y1:y2]
-        #crop = transform(crop)
-        cords.append(bb)
+
+        if count == 0:
+            cords = bb
+        else:
+            cords = torch.cat((cords, bb))
+
+        count = count + 1
 
     return cords
 
@@ -122,7 +127,7 @@ def analyze(name_video, name_annotation, path_model, transform, h = 256, w = 128
 
     model = model.eval()
 
-    db = PeopleDB(dist_function=distance.euclidean, dist_threshold=1.0, frame_memory=20*10, max_descr_per_id=3)
+    db = PeopleDB(dist_function=L2_distance, dist_threshold=1.0, frame_memory=20*10, max_descr_per_id=3)
     ncolors = 255
     colors = [[random.randint(0, 255) for _ in range(3)] for _ in range(ncolors)]
 
@@ -139,17 +144,15 @@ def analyze(name_video, name_annotation, path_model, transform, h = 256, w = 128
             pass
 
         bbs = extract_bb(data, frame, f, transform)
-        frame_tensor = torch.from_numpy(frame).permute(2, 0, 1).unsqueeze(0) / 255.0
-        print(bbs)
-        print(frame_tensor)
         #print(bbs)
-        #print(frame_tensor)
+        frame_tensor = torch.from_numpy(frame).permute(2, 0, 1).unsqueeze(0) / 255.0
         crops = roi_pool(frame_tensor, bbs, output_size = [h, w])
         crops = transform(crops)
-        print(crops)
+        #print("Crops shape: " + str(crops.shape))
+        #print(crops)
         target_ids = []
         feature_vectors = model(crops)
-        #print(feature_vectors)
+        print(feature_vectors.shape)
 
         for i in range(feature_vectors.shape[0]):
             vector = feature_vectors[i]
@@ -166,7 +169,7 @@ def analyze(name_video, name_annotation, path_model, transform, h = 256, w = 128
             plot_history(db.Update_ID_position(id, mean), frame, color=colors[id % ncolors],line_thickness=2)
 
         cv2.imshow("img", frame)
-        cv2.waitKey(1)
+        cv2.waitKey(0)
 
 
         f = f + 10
