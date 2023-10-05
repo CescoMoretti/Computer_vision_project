@@ -64,7 +64,7 @@ def load_network(network, epoch, path_model):
 ### Extract bounding box
 ### --------------------
 ################################################################
-def extract_bb(data, frame, f):
+def extract_bb(data, frame, f, transform):
     thisF = np.flatnonzero(data[:,0]==f)
     cords = []
     for i in thisF:
@@ -73,14 +73,17 @@ def extract_bb(data, frame, f):
         width = ((data[i, 4])).astype(int)
         heigth = ((data[i, 5])).astype(int)
 
-
         x2 = x1 + width
         y2 = y1 + heigth
 
-        cord = [x1, y1, x2, y2]
-        cords.append(cord)
+        bb = torch.Tensor([x1, y1, x2, y2]).view(1, 4)
+        zero = torch.zeros((1,1))
+        bb = torch.cat((zero, bb), 1)
+        #crop = frame[x1:x2,y1:y2]
+        #crop = transform(crop)
+        cords.append(bb)
 
-    return cord
+    return cords
 
 ##################################################
 ### Plotting
@@ -107,7 +110,7 @@ def plot_one_box(x, img, color=None, label=None, line_thickness=3):
 
 
 #Analizzare video per riedintificazione
-def analyze(name_video, name_annotation, path_model, transform, epoch = "last"):
+def analyze(name_video, name_annotation, path_model, transform, h = 256, w = 128, epoch = "last"):
     
     #Aprire i relativi file e caricare il modello
     video = cv2.VideoCapture(name_video)
@@ -135,11 +138,18 @@ def analyze(name_video, name_annotation, path_model, transform, epoch = "last"):
         else:
             pass
 
-        bbs = extract_bb(data, frame, f)
-        crops = roi_pool(frame, bbs)
+        bbs = extract_bb(data, frame, f, transform)
+        frame_tensor = torch.from_numpy(frame).permute(2, 0, 1).unsqueeze(0) / 255.0
+        print(bbs)
+        print(frame_tensor)
+        #print(bbs)
+        #print(frame_tensor)
+        crops = roi_pool(frame_tensor, bbs, output_size = [h, w])
         crops = transform(crops)
+        print(crops)
         target_ids = []
         feature_vectors = model(crops)
+        #print(feature_vectors)
 
         for i in range(feature_vectors.shape[0]):
             vector = feature_vectors[i]
@@ -166,7 +176,7 @@ if __name__ == "__main__":
     
     opt = args()
     name_model = opt.name
-    epoch = opt.epoch
+    epoch = opt.which_epoch
     name_video = opt.video
     name_annotation = opt.annotation
     path_model = opt.path_model
@@ -174,9 +184,9 @@ if __name__ == "__main__":
     w = opt.w
 
     transform = T.Compose([
-        T.ToTensor(),
+        #T.ToTensor(),
         T.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]),
     ])
 
-
+    analyze(name_video, name_annotation, path_model, transform, h, w, epoch)
 
