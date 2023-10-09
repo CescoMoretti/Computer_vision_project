@@ -1,22 +1,13 @@
 import argparse
 import torch
-import torch.nn as nn
-import torch.optim as optim
-from torch.optim import lr_scheduler
-from torch.autograd import Variable
-import torch.backends.cudnn as cudnn
 import numpy as np
-import torchvision
-from torchvision import datasets, models, transforms
 from torchvision.ops import roi_pool
 import time
 import os
-import math
 from model import ReIDMOdel
 from PeopleDB import PeopleDB
 import torchvision.transforms as T
 import cv2
-from scipy.spatial import distance
 import random
 from distances import L2_distance
 #from utils import fuse_all_conv_bn
