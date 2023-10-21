@@ -79,7 +79,6 @@ class Frame_extractor:
         if self.video_path == None:
             print("ERROR: load video before extracting, use load_video()")
             return -1
-        print("extracting")
 
         if not self.finished_video:
             for i in range(0,skip_n_frame): #verify the next n frame are valid
