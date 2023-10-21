@@ -136,5 +136,4 @@ test_imgs/*
 *.pth
 *.mat
 *yolov8n.pt
-YOLOv8/yolov8n/*
-*/runs/*
+src/detector/yolov8/runs

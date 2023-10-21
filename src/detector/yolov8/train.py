@@ -7,9 +7,10 @@ def main():
     os.environ["KMP_DUPLICATE_LIB_OK"]="TRUE"
     torch.cuda.empty_cache()
     model = YOLO('yolov8n.pt')
-    model.train(data='./src/detector/yolov8/train.yaml',
-                epochs=100, 
+    model.train(data='./train.yaml',
+                epochs=150, 
                 imgsz=544, 
+                cache= True,
                 #device="cpu", 
                 workers=0,
                 batch=4, 

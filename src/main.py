@@ -7,15 +7,13 @@ this_path = os.getcwd
 def main():
     parser = argparse.ArgumentParser(description='Get frames from videos')
     parser.add_argument(
-        '--video_dir', help='Directory hosting videos', required=True)
-    parser.add_argument('--out_dir', help='Directory of output', required=True)
+        '--video_path', help='path to the video', required=True)
 
     args = parser.parse_args()
 
-    video_dir = args.video_dir
-    out_dir = args.out_dir
-    print(video_dir)
-    pipeline = Pipeline(out_dir, video_dir)
+    video_path = args.video_path
+    print(video_path)
+    pipeline = Pipeline(video_path)
     for i in range(500):
         pipeline.process_frame()
 

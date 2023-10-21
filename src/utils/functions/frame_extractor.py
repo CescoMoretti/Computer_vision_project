@@ -92,3 +92,8 @@ class Frame_extractor:
         else:
             print("INFO: video finished")
         return image, self.finished_video
+    def get_width(self):
+        return self.video_cap.get(cv2.CAP_PROP_FRAME_WIDTH)
+    def get_height(self):
+        return self.video_cap.get(cv2.CAP_PROP_FRAME_HEIGHT) 
+    

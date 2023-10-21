@@ -1,5 +1,6 @@
-path: C:\Users\cesco\OneDrive\Desktop\hollywood_small\  # dataset root dir
+path: /home/morro/Desktop/hollywood_small/  # dataset root dir
 train: train  # train images (relative to 'path') 
 test:  test
 val:   val
-names: head.names
+names:
+  0: head
