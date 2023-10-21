@@ -10,8 +10,8 @@ this_path = os.getcwd()
 class Pipeline():
     def __init__(self, video_dir):
         self.this_path = os.getcwd()
-        self.people_detector = Detector_yv8('yolov8n.pt')
-        self.head_detector = Detector_yv8(this_path + '/src/detector/yolov8/best.pt')
+        self.people_detector = Detector('yolov8n.pt')
+        self.head_detector = Detector(this_path + '/src/detector/yolov8/best.pt')
         self.frame_extractor = Frame_extractor()
         self.frame_extractor.load_video(video_dir)
         self.frame_extractor.get_width()
@@ -21,13 +21,12 @@ class Pipeline():
 
     def process_frame(self):
         frame, finished_video = self.frame_extractor.extract()
-        presult, people_classIds, people_scores, people_boxes = self.people_detector.detect(frame)
-        hresult, head_classIds, head_scores, head_boxes = self.head_detector.detect(frame)
+        people_classIds, people_scores, people_boxes = self.people_detector.detect(frame)
+        head_classIds, head_scores, head_boxes = self.head_detector.detect(frame)
         for h_box in head_boxes:
             best_person_box = [0,0,0,0]
             best_person_box_iou = 0
             for p_box in people_boxes:
-                # print(presult.boxes.cpu().numpy().xywh[0])
                 iou = Pipeline.calculate_iou(h_box, p_box)
                 if iou > 0.08: 
                     best_person_box = p_box

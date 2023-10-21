@@ -8,7 +8,7 @@ from functions.frame_extractor import Frame_extractor
 
 COLORS = [(0, 255, 255), (255, 255, 0), (0, 255, 0), (255, 0, 0)]
 
-class Detector_yv8():
+class Detector():
 
     def __init__(self, weights_path):
         self.model = YOLO(weights_path)
@@ -17,7 +17,7 @@ class Detector_yv8():
 
     def detect(self, frame):
         result = self.model.predict(frame, device=0, classes=[0])[0] #this is to pass detection of the first frame (we only give one)
-        return result, result.boxes.cpu().numpy().cls, result.boxes.cpu().numpy().conf, result.boxes.cpu().numpy().xyxy#classIds, scores, boxes
+        return result.boxes.cpu().numpy().cls, result.boxes.cpu().numpy().conf, result.boxes.cpu().numpy().xyxy#classIds, scores, boxes
 
     def draw_resut(self, frame, classIds, scores, boxes, color):
         for (classid, score, box) in zip( classIds, scores, boxes):
