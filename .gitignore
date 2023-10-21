@@ -135,6 +135,6 @@ test_imgs/*
 #ReID network
 *.pth
 *.mat
-yolov8n.pt
+*yolov8n.pt
 YOLOv8/yolov8n/*
-runs/*
+*/runs/*
