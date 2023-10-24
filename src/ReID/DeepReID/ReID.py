@@ -43,7 +43,7 @@ class ReID():
         return network
     
     #ANALYZE
-    def analyze(self, frame, h_bbs, b_bbs):
+    def analyze(self, frame, b_bbs):
 
         #Vedere formato bounding box
 
@@ -60,4 +60,4 @@ class ReID():
 
         self.db.Update_Frame()
 
-        return
+        return target_ids

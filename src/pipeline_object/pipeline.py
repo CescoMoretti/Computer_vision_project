@@ -1,4 +1,5 @@
 from detector.detector import Detector
+from ReID.DeepReID.ReID import ReID
 import sys, os
 sys.path.append(os.getcwd()+"/src/utils/") 
 from shapely.geometry import Polygon
@@ -10,6 +11,7 @@ class Pipeline():
         self.this_path = os.getcwd()
         self.people_detector = Detector('yolov8n.pt')
         self.head_detector = Detector(this_path + '/src/detector/yolov8/best.pt')
+        self.reid = ReID(this_path+ "/src/ReID/DeepReID/ModelResult/")
 
     def process_frame(self,frame):  
                 
@@ -31,13 +33,11 @@ class Pipeline():
             if best_person_box_iou != 0.0:
                 bb_head_list.append(h_box)
                 bb_person_list.append(best_person_box)
-                self.people_detector.draw_resut(frame, people_classIds, people_scores, [best_person_box], cv2.COLOR_BGR2HSV)
-                self.head_detector.draw_resut(frame, head_classIds, head_scores, [h_box], cv2.COLOR_LUV2BGR)  
-        #histogram = histogram_finder.getHistogram(bouniding_box)
+                # self.people_detector.draw_resut(frame, people_classIds, people_scores, [best_person_box], cv2.COLOR_BGR2HSV)
+                # self.head_detector.draw_resut(frame, head_classIds, head_scores, [h_box], cv2.COLOR_LUV2BGR)  
+        self.identification = self.reid.analyze(frame, bb_person_list)
         #distance = distance_finder.findDistance(bouniding_box) -->creare oggetto per estrarre teste
-        #histogram finder / salva dati riconoscimento
-        #distance finderer
-        # input("Press Enter to continue...")
+        input("Press Enter to continue...")
 
         
     def calculate_iou(box_1, box_2):
