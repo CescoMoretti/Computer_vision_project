@@ -38,25 +38,25 @@ class DistanceEstimator():
 
         for i in range (len(identities)):
 
-            center = bodyBB[i][0] + bodyBB[i][2] / 2
-            self.idsCenters[identities[i]].append(center)
+            center = (bodyBB[i][0] + bodyBB[i][2]) / 2
+            print(identities[i])
+            self.idsCenters[int(identities[i])].append(center)
 
-            headWidth = headBB[i][2] * self.pxToMmRatio[0]
-            headHeight = headBB[i][3] * self.pxToMmRatio[1]
-
-            bodyWidth = bodyBB[i][2] * self.pxToMmRatio[2]
-            bodyHeight = bodyBB[i][3] * self.pxToMmRatio[3]
+            headWidth  = (headBB[i][2]- headBB[i][0])* self.pxToMmRatio[0]  #headBB[i][2] * self.pxToMmRatio[0]
+            headHeight = (headBB[i][3]- headBB[i][1])* self.pxToMmRatio[1]  #headBB[i][3] * self.pxToMmRatio[1]
+            bodyWidth  = (bodyBB[i][2]- bodyBB[i][0])* self.pxToMmRatio[2]  #bodyBB[i][2] * self.pxToMmRatio[2]
+            bodyHeight = (bodyBB[i][3]- bodyBB[i][1])* self.pxToMmRatio[3]  #bodyBB[i][3] * self.pxToMmRatio[3]
 
             if abs(1 - ((headWidth * headHeight) / (bodyWidth * bodyHeight))) > 0.5:
                 distance = headWidth * 0.6 + headHeight * 0.4
             else:
                 distance = headWidth * 0.4 + headHeight * 0.2 + bodyWidth * 0.2 + bodyHeight * 0.2
 
-            self.idsDistances[identities[i]].append(distance)
+            self.idsDistances[int(identities[i])].append(distance)
 
             message = "Distance: " + str(distance)
 
-            direction = self.estimateDirection(identities[i])
+            direction = self.estimateDirection(int(identities[i]))
             if direction != "":
                 message = message + " - Direction: " + direction
 

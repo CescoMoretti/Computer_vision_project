@@ -39,6 +39,7 @@ class PeopleDB:
             n_samples = self._counts_[i]
             id_distances = self._dist_function_(self._vectors_[i, :n_samples, :], descriptor.unsqueeze(0))
             mean_distances[i] = torch.sum(id_distances).flatten() / n_samples
+            print(mean_distances[i])
 
         idx = torch.argmin(mean_distances)  # here we search for the identity which is closer to the probe.
 

@@ -137,3 +137,4 @@ test_imgs/*
 *.mat
 *yolov8n.pt
 src/detector/yolov8/runs
+/.\ModelResult\*

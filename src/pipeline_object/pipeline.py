@@ -1,5 +1,6 @@
 from detector.detector import Detector
 from ReID.DeepReID.ReID import ReID
+from distance_estimator.DistanceEstimator import DistanceEstimator
 import sys, os
 sys.path.append(os.getcwd()+"/src/utils/") 
 from shapely.geometry import Polygon
@@ -12,6 +13,7 @@ class Pipeline():
         self.people_detector = Detector('yolov8n.pt')
         self.head_detector = Detector(this_path + '/src/detector/yolov8/best.pt')
         self.reid = ReID(this_path+ "/src/ReID/DeepReID/ModelResult/")
+        self.distance_estimator = DistanceEstimator()
 
     def process_frame(self,frame):  
                 
@@ -35,8 +37,8 @@ class Pipeline():
                 bb_person_list.append(best_person_box)
                 # self.people_detector.draw_resut(frame, people_classIds, people_scores, [best_person_box], cv2.COLOR_BGR2HSV)
                 # self.head_detector.draw_resut(frame, head_classIds, head_scores, [h_box], cv2.COLOR_LUV2BGR)  
-        self.identification = self.reid.analyze(frame, bb_person_list)
-        #distance = distance_finder.findDistance(bouniding_box) -->creare oggetto per estrarre teste
+        identification = self.reid.analyze(frame, bb_person_list)
+        distances = self.distance_estimator.computeDistance(identification, bb_person_list, bb_head_list)
         input("Press Enter to continue...")
 
         

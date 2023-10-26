@@ -1,19 +1,15 @@
 import argparse
 import torch
-import numpy as np
 from torchvision.ops import roi_pool
-import time
 import os
-from model import ReIDMOdel
-from PeopleDB import PeopleDB
+from ReID.DeepReID.model import ReIDMOdel
+from ReID.DeepReID.PeopleDB import PeopleDB
 import torchvision.transforms as T
-import cv2
-import random
-from distances import L2_distance
+from ReID.DeepReID.distances import L2_distance
 
 class ReID():
     
-    def __init__(self, path_model, h = 256, w = 128, epoch = "last"):
+    def __init__(self, path_model, h = 256, w = 128, epoch = "13"):
 
         #PARAMETER
         self.epoch = epoch
@@ -35,6 +31,22 @@ class ReID():
 
         return
 
+    def resize_bb(self, b_bbs):
+        n = len(b_bbs)
+        count = 0
+
+        for i in range(n):
+            bb = torch.Tensor(b_bbs[i]).view(1, 4)
+            zero = torch.zeros((1,1))
+            bb = torch.cat((zero, bb), 1)
+
+            if count == 0:
+                cords = bb
+            else:
+                cords = torch.cat((cords, bb))
+            count = count + 1
+
+        return cords
 
     #LOAD NETWORK
     def load_network(self, network, epoch, path_model):
@@ -48,6 +60,7 @@ class ReID():
         #Vedere formato bounding box
 
         frame_tensor = torch.from_numpy(frame).permute(2,0,1).unsqueeze(0) / 255.0
+        b_bbs = self.resize_bb(b_bbs)
         crops = roi_pool(frame_tensor, b_bbs, output_size=[self.h, self.w])
         crops=self.transform(crops)
 

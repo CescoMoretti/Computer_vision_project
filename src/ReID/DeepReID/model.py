@@ -56,8 +56,8 @@ class ReIDMOdel(nn.Module):
         x = x.view(x.size(0), x.size(1))
         x = self.hide(x)
 
-        if self.training:
-            x = self.classifier(x)
+        # if self.training:
+        x = self.classifier(x)
 
         return x
         

@@ -43,13 +43,16 @@ def args():
 
     #Optimizer
     parser.add_argument('--lr', default=0.05, type=int, help='Learning Rate')
-    parser.add_argument('--total_epoch', default=50, type=int, help='Total epoch for training')
+    parser.add_argument('--total_epoch', default=15, type=int, help='Total epoch for training')
     parser.add_argument('--weight_decay', default=5e-4, type=float, help='Weight decay. More Regularization Smaller Weight.')
 
     #Loss
     parser.add_argument('--adv', default=0.0, type=float, help='use adv loss as 1.0')
 
     opt = parser.parse_args()
+    cudnn.enabled = True
+    cudnn.benchmark = True
+
 
     return opt
 
@@ -92,7 +95,7 @@ def get_data(dataset_path='../Market/pytorch', train_all=False, batchsize=32, h=
 ### -----------
 ##############################################################################
 def train_model(model, criterion, optimizer, scheduler, dataloaders, dataset_sizes, device, bathcsize=32, num_epochs = 25):
-
+    gpu = True
     y_loss = {} #loss history
     y_loss['train'] = []
     y_loss['val'] = []
@@ -117,15 +120,17 @@ def train_model(model, criterion, optimizer, scheduler, dataloaders, dataset_siz
             running_corrects = 0.0
 
             #Iterate over data
+            count = 0
             for (data, dlabel) in dataloaders[phase]:
-                
                 #Get the input
-                inputs, labels = data.to(device=device), dlabel.to(device)
+                inputs, labels = data, dlabel
                 now_batch_size, c, h, w = inputs.shape
                 if now_batch_size<bathcsize:
                     continue
-
-                inputs, labels = Variable(inputs), Variable(labels)
+                if gpu:
+                    inputs, labels = Variable(inputs.cuda().detach()), Variable(labels.cuda().detach())
+                else:
+                    inputs, labels = Variable(inputs), Variable(labels)
 
                 optimizer.zero_grad()
 
@@ -164,7 +169,11 @@ def train_model(model, criterion, optimizer, scheduler, dataloaders, dataset_siz
 
             if phase=='val' and epoch%4==0:
                 last_model_wts = model.state_dict()
-                save_network(model, epoch+1)
+                if(gpu):
+                    save_network(model.module, epoch+1)
+                else:
+                    save_network(model, epoch+1)
+
             if phase == 'val':
                 draw_curve(epoch, y_loss, y_err)
             if phase == 'train':
@@ -174,7 +183,10 @@ def train_model(model, criterion, optimizer, scheduler, dataloaders, dataset_siz
         print()
 
     model.load_state_dict(last_model_wts)
-    save_network(model, 'last')
+    if(gpu):
+        save_network(model.module, 'last')
+    else:
+        save_network(model, 'last')
 
     return model
 
@@ -206,6 +218,8 @@ def save_network(model, epoch):
     save_filename = 'net_%s.pth'% epoch
     save_path = os.path.join('.\ModelResult',save_filename)
     torch.save(model.cpu().state_dict(), save_path)
+    if torch.cuda.is_available():
+        model.cuda(0)
     pass
 
 ##############################################################################
@@ -223,19 +237,29 @@ if __name__ == '__main__':
 
     dataloaders, dataset_sizes, class_names = get_data(opt.data_dir, opt.train_all, opt.batchsize, opt.h, opt.w, opt.n_workers)
 
-    model = ReIDMOdel(len(class_names)).to(device=device)
-
+    model = ReIDMOdel(len(class_names))
+    
     #print(model)
 
     optim_name = optim.SGD
-
-    ignored_params = list(map(id, model.classifier.parameters() ))
-    base_params = filter(lambda p: id(p) not in ignored_params, model.parameters())
-    classifier_params = model.classifier.parameters()
-    optimizer_ft = optim_name([
-        {'params': base_params, 'lr': 0.1*opt.lr},
-        {'params': classifier_params, 'lr': opt.lr}
-    ], weight_decay=opt.weight_decay, momentum=0.9, nesterov=True)
+    
+    if torch.cuda.is_available():
+        model = torch.nn.DataParallel(model, device_ids=[0]).cuda()
+        ignored_params = list(map(id, model.module.classifier.parameters() ))
+        base_params = filter(lambda p: id(p) not in ignored_params, model.module.parameters())
+        classifier_params = model.module.classifier.parameters()
+        optimizer_ft = optim_name([
+            {'params': base_params, 'lr': 0.1*opt.lr},
+            {'params': classifier_params, 'lr': opt.lr}
+        ], weight_decay=opt.weight_decay, momentum=0.9, nesterov=True)
+    else:
+        ignored_params = list(map(id, model.classifier.parameters() ))
+        base_params = filter(lambda p: id(p) not in ignored_params, model.parameters())
+        classifier_params = model.classifier.parameters()
+        optimizer_ft = optim_name([
+            {'params': base_params, 'lr': 0.1*opt.lr},
+            {'params': classifier_params, 'lr': opt.lr}
+        ], weight_decay=opt.weight_decay, momentum=0.9, nesterov=True)
 
     exp_lr_scheduler = optim.lr_scheduler.StepLR(optimizer_ft, step_size=opt.total_epoch*2//3, gamma=0.1)
 
@@ -247,6 +271,6 @@ if __name__ == '__main__':
         yaml.dump(vars(opt), fp, default_flow_style=False)
 
     criterion = nn.CrossEntropyLoss().to(device=device)
-
+    print(device)
     model = train_model(model=model, criterion=criterion, optimizer=optimizer_ft, scheduler=exp_lr_scheduler, dataloaders=dataloaders,
                         dataset_sizes=dataset_sizes, device=device, bathcsize=opt.batchsize, num_epochs=opt.total_epoch)
