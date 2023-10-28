@@ -1,0 +1,12 @@
+adv: 0.0
+batchsize: 32
+data_dir: /home/morro/Desktop/Market-1501-v15.09.15/pytorch/
+h: 256
+lr: 0.05
+n_workers: 8
+name: ResNet50
+total_epoch: 15
+train_all: false
+use_gpu: '0'
+w: 128
+weight_decay: 0.0005

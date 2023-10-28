@@ -39,15 +39,14 @@ class PeopleDB:
             n_samples = self._counts_[i]
             id_distances = self._dist_function_(self._vectors_[i, :n_samples, :], descriptor.unsqueeze(0))
             mean_distances[i] = torch.sum(id_distances).flatten() / n_samples
-            print(mean_distances[i])
+            print("Mean distance: " + str(mean_distances[i]))
 
         idx = torch.argmin(mean_distances)  # here we search for the identity which is closer to the probe.
-
+        print("Min dist: "+ str(mean_distances[idx]))
         #print(f"mean_dists ({mean_distances.shape}): {mean_distances}. minimum at index {idx}")
-
         if mean_distances[idx] <= self._dist_threshold_:
             #we got a match
-
+            print("RECOGNISED same person " +str(idx))
             if self._counts_[idx] < self._max_descr_per_id_:
                 #there is still space for this identity
                 self._vectors_[idx, self._counts_[idx].item()] = descriptor
@@ -60,12 +59,17 @@ class PeopleDB:
             self._last_update_[idx] = self._current_frame_
             return self._ids_[idx], False
         else:
+            print("creating a new person")
+
             #this seems to be a new target
             return self._Create_new_record_(descriptor), True
 
     def _Create_new_record_(self, new_vector:torch.Tensor):
         new_id = torch.zeros((1,self._max_descr_per_id_, new_vector.shape[0]), dtype=torch.float64, device=self.device, requires_grad=False)
         new_id[0,0] = new_vector
+        new_id[0,1] = new_vector
+        new_id[0,2] = new_vector
+        
         #print("pre:",self._vectors_.shape)
         self._vectors_ = torch.cat((self._vectors_, new_id))
         #print("after:",self._vectors_.shape)

@@ -6,10 +6,10 @@ from ReID.DeepReID.model import ReIDMOdel
 from ReID.DeepReID.PeopleDB import PeopleDB
 import torchvision.transforms as T
 from ReID.DeepReID.distances import L2_distance
-
+from ReID.DeepReID.distances import Cosine_distance
 class ReID():
     
-    def __init__(self, path_model, h = 256, w = 128, epoch = "13"):
+    def __init__(self, path_model, h = 256, w = 128, epoch = "9"):
 
         #PARAMETER
         self.epoch = epoch
@@ -22,7 +22,7 @@ class ReID():
         self.model = self.model.eval()
 
         #CREATE DATABASE
-        self.db = PeopleDB(dist_function=L2_distance, dist_threshold=1.0, frame_memory=20*10, max_descr_per_id=3)
+        self.db = PeopleDB(dist_function=Cosine_distance, dist_threshold=0.450, frame_memory=20*10, max_descr_per_id=3)
 
         #TRANSFORM
         self.transform = T.Compose([
