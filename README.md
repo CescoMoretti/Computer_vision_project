@@ -1,19 +1,12 @@
-# Computer Vision Project
+# Pipeline for pedestrian tracking
+Gabriele Colantoni, Francesco Moretti, Federico Ramanzin
+Universiry of Modena and Reggio Emilia
+{228789, 260877, 254629}@studenti.unimore.it
+08/11/2023
 
-1-in .vscode folder create a file named tasks.json
-
-2- paste this: 
-    {
-        "version": "2.0.0",
-        "command": "Python",
-        "isShellCommand": true,
-        "args": [ "${file}",
-            "--video_dir", "[path to test video].mp4",
-            "--out_dir", "[path to a folder to save eventual test frames]"
-        ],
-        "showOutput": "always"
-    }
-    
-3- fill the paths with your own
-
-4- open the main.py file and press ctr+shift+b
+How to run:
+1) The Yolo weight are already present in the right folder
+2) Download the weight for Re-Identification and place them in project_folder\src\ReID\DeepReID\ModelResult
+3) Download the video
+4) change directory to project_folder\src
+5) Run the code with python3 main.py --video_path ../video_cv.mp4
