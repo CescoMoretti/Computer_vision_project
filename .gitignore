@@ -138,3 +138,5 @@ test_imgs/*
 *yolov8n.pt
 src/detector/yolov8/runs
 /.\ModelResult\*
+
+runs/*
