@@ -1,8 +1,8 @@
-# Pipeline for pedestrian tracking
-Gabriele Colantoni, Francesco Moretti, Federico Ramanzin
-Universiry of Modena and Reggio Emilia
-{228789, 260877, 254629}@studenti.unimore.it
-08/11/2023
+# Pipeline for pedestrian tracking  
+Gabriele Colantoni, Francesco Moretti, Federico Ramanzin  
+Universiry of Modena and Reggio Emilia  
+{228789, 260877, 254629}@studenti.unimore.it  
+08/11/2023  
 
 How to run:
 1) The Yolo weight are already present in the right folder
