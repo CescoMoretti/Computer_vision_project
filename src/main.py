@@ -1,5 +1,5 @@
 from pipeline_object.pipeline import Pipeline
-from functions.frame_extractor import Frame_extractor
+from utils.functions.frame_extractor import Frame_extractor
 
 import os
 import argparse
