@@ -11,8 +11,8 @@ class Pipeline():
     def __init__(self):
         self.this_path = os.getcwd()
         self.people_detector = Detector('yolov8n.pt')
-        self.head_detector = Detector(this_path + '/src/detector/yolov8/best.pt')
-        self.reid = ReID(this_path+ "/src/ReID/DeepReID/ModelResult/")
+        self.head_detector = Detector(this_path + '/detector/yolov8/best.pt')
+        self.reid = ReID(this_path+ "/ReID/DeepReID/ModelResult/")
         self.distance_estimator = DistanceEstimator()
 
     def process_frame(self,frame):  
@@ -37,14 +37,20 @@ class Pipeline():
                 bb_person_list.append(p_box)
                 # self.people_detector.draw_resut(frame, people_classIds, people_scores, [p_box], cv2.COLOR_BGR2HSV)
                 # self.head_detector.draw_resut(frame, head_classIds, head_scores, [best_head_box], cv2.COLOR_LUV2BGR) 
-        print(len(bb_person_list)) 
-        identification = self.reid.analyze(frame, bb_person_list)
-        self.people_detector.draw_resut(frame, people_classIds, identification, bb_person_list, cv2.COLOR_BGR2HSV)
+        print(len(bb_person_list))
 
-        # self.head_detector.draw_resut(frame, head_classIds, identification, bb_head_list, cv2.COLOR_LUV2BGR) 
-            
-        # distances = self.distance_estimator.computeDistance(identification, bb_person_list, bb_head_list)
+        if len(bb_person_list) > 0:
+            identification = self.reid.analyze(frame, bb_person_list) 
+                
+            distances = self.distance_estimator.computeDistance(identification, bb_person_list, bb_head_list)
+
+            self.people_detector.draw_resut(frame, distances, bb_person_list, cv2.COLOR_BGR2HSV)
+            print(distances)
+            #self.people_detector.draw_resut(frame, people_classIds, identification, bb_person_list, cv2.COLOR_BGR2HSV)
+            #self.head_detector.draw_resut(frame, head_classIds, identification, bb_head_list, cv2.COLOR_LUV2BGR)
+
         input("Press Enter to continue...")
+        
 
         
     def calculate_iou(box_1, box_2):
