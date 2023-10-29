@@ -3,7 +3,7 @@ from genericpath import isfile
 import os
 import cv2 
 import multiprocessing
-import path
+from os import path
 
 # To make it work on vscode add this to your .vscode/launch.json and run in debug mode
 # "args": [
