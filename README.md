@@ -6,7 +6,7 @@ Universiry of Modena and Reggio Emilia
 
 How to run:
 1) The Yolo weight are already present in the right folder
-2) Download the weight for Re-Identification and place them in project_folder\src\ReID\DeepReID\ModelResult
-3) Download the video
-4) change directory to project_folder\src
+2) If downloaded from git also download the weight for Re-Identification and place them in project_folder\src\ReID\DeepReID\ModelResult
+3) If downloaded from git also download the video
+4) Change directory to project_folder\src
 5) Run the code with python3 main.py --video_path ../video_cv.mp4
